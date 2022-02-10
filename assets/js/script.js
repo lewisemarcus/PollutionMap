@@ -21,7 +21,7 @@ let lonInc
 let latInc = .48
 let zoomLevel = 9
 //Map and styling declarations.
-let features, greyFeature, map, vectorSource, vectorLayer, p, selectedFeat, oldStyle, isMouseDown, T, isScrolling, searched, clicked
+let features, greyFeature, map, back, sight, vectorSource, vectorLayer, p, selectedFeat, oldStyle, isMouseDown, T, isScrolling, searched, clicked
 //'p' in drawGrid loop function is to enumerate the points on the grid:
 /*678
   345
@@ -104,6 +104,9 @@ function myFunction() {
     }
 }
 //Start the program
+//draw map
+
+
 start()
 //launches when page loads, get location from IP and draw map.
 function start() {
@@ -143,6 +146,26 @@ function start() {
             zip = "90210"
             city = "Beverley Hills"
         }
+        
+        back=new ol.layer.Tile({
+            source: new ol.source.OSM()
+        })
+        sight = new ol.View({
+            projection: 'EPSG:4326',
+            center: [lon, lat],
+            zoom: zoomLevel
+        })
+        map = new ol.Map({
+            target: 'map',
+            layers:[back],
+            view: sight
+        })
+
+
+
+
+
+
         locationInput.value = zip
         widthP = Math.min(parseInt(getComputedStyle(sizer).getPropertyValue('width')) / 600)
         latInc = Inc * widthP * 0.00274658203125
@@ -293,10 +316,41 @@ function drawGrid(lati, lonj, s, City) { //'s' is width and height of grid.
                             source: vectorSource,
                             updateWhileAnimating: true,
                             updateWhileInteracting: true,
-                            opacity: 0.5
+                            opacity: 0.5,
+                            name: "dots"
                         })
                         //Draw map centered on given coordinates.
+                        /*back=new ol.layer.Tile({
+                                source: new ol.source.OSM()
+                                })
+                        sight = new ol.View({
+                                projection: 'EPSG:4326',
+                                center: [0, 51.5],
+                                zoom: zoomLevel
+                            })
                         map = new ol.Map({
+                                target: 'map',
+                                layers:back,
+                                view: sight
+                                })*/
+
+
+
+                        
+                        //map.removeLayer(vectorLayer)
+
+                        //console.log(map.getLayers())
+                        map.getLayers().forEach(function(layer) { if (layer.get('name')=='dots') map.removeLayer(layer); });
+
+                        //map.removeLayer("dots")
+                        //map.removeOverlay()
+                        map.addLayer(vectorLayer)
+                        map.getView().setCenter([lonj, lati])
+                        map.getView().setZoom(zoomLevel)
+                        map.render()
+
+                        /*})
+                         = new ol.Map({
                             target: 'map',
                             layers: [
                                 new ol.layer.Tile({
@@ -308,7 +362,7 @@ function drawGrid(lati, lonj, s, City) { //'s' is width and height of grid.
                                 center: [lonj, lati],
                                 zoom: zoomLevel
                             })
-                        })
+                        })*/
                         searchCurrentEl.setAttribute('style', 'display: none')
                         currentLoc.setAttribute('style', 'display: none')
                         searchCurrentEl.removeEventListener("click", searchCurrent)
@@ -509,7 +563,7 @@ function getLocationData() {
             return data.data
         })
 }
-//Get input location approximate area size in lat/lon
+//Get input location approximate area size in lat/lon, if area is out of map bounds set custom area
 function searchLocation(search) {
     getLocationData(search)
         .then(function (data) {
@@ -677,11 +731,12 @@ function changeCoord() {
 }
 //Clears last map and creates new map div for new search.
 function clearM() {
+    /*
     disp.children[0].remove()
     const m = document.createElement("div")
     m.setAttribute("class", "map")
     m.setAttribute("id", "map")
-    disp.append(m)
+    disp.append(m)*/
 }
 //Displays searches in HTML element.
 function displaySearches(index) {
