@@ -820,7 +820,11 @@ function walkScore(lat, lon, address) {
     url = `https://api.walkscore.com/score?format=json&
     address=${this.address}&lat=${lat}&
     lon=${lon}&transit=1&bike=1&wsapikey=${walkKey}`
-    fetch(url)
+    fetch(url, {
+        headers: new Headers({
+            'Access-Control-Allow-Origin': '*'
+        })
+    })
     .then(function (response) {
         //If response.ok is successful, return response, else reject promise and trigger catch.
         if(response.ok) return response.json
