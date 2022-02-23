@@ -822,7 +822,7 @@ function walkScore(lat, lon, address) {
     lon=${lon}&transit=1&bike=1&wsapikey=${walkKey}`
     fetch(url, {
         headers: new Headers({
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': 'https://lewisemarcus.github.io'
         })
     })
     .then(function (response) {
