@@ -817,9 +817,7 @@ maxSize.addEventListener("change", mediaQueryTwo)
 //Walk Score API function
 function walkScore(lat, lon, address) {
     this.address = encodeURI(address)
-    url = `https://api.walkscore.com/score?format=json&
-    address=${this.address}&lat=${lat}&
-    lon=${lon}&transit=1&bike=1&wsapikey=${walkKey}`
+    url = `https://api.walkscore.com/score?format=json&address=${this.address}&lat=${lat}&lon=${lon}&transit=1&bike=1&wsapikey=${walkKey}`
     fetch(url, {
         headers: new Headers({
             'Access-Control-Allow-Origin': 'https://api.walkscore.com/'
