@@ -1,5 +1,6 @@
 //API Key for pollution pull and URL for IP address.
 const AQkey = "03e6687524e359bbf0987c0f2ede90cb945e4404"
+const walkKey = '9562dbb48e48f639ee1b8a2f6f32b6d6'
 const ipUrl = 'https://ipapi.co/json/'
 //Location declarations.
 let lon, lat, zip, city
@@ -40,6 +41,7 @@ const llContent = document.getElementById("levelsContent")
 const locationInput = document.getElementById("enterZip")
 locationInput.value = ""
 const disp = document.getElementById("disp")
+
 //Map buttons.
 const currentLoc = document.getElementById('currentLoc')
 currentLoc.addEventListener("click", localSearch)
@@ -48,6 +50,7 @@ OK.addEventListener("click", myFunction)
 const searchCurrentEl = document.getElementById('here')
 searchCurrentEl.addEventListener("click", searchCurrent)
 searchCurrentEl.setAttribute('style', 'visibility: hidden')
+
 //localStorage HTML elements.
 const HDISP = document.getElementById("displayedSearches")
 let fs = 0;//index of first stored element to display
@@ -77,12 +80,14 @@ else {
     displaySearches(fs)
 }
 let startClick
+
 //Event listener function for host's current location in real life.
 function localSearch() {
     searchCurrentEl.setAttribute('style', 'visibility: hidden')
     currentLoc.setAttribute('style', 'visibility: hidden')
     start()
 }
+
 //Event listener function for search host's location on map.
 function searchCurrent() {
     searched = true
@@ -90,6 +95,7 @@ function searchCurrent() {
     currentLoc.setAttribute('style', 'visibility: hidden')
     changeCoord()
 }
+
 //Event listener function for new search location.
 function myFunction() {
     clicked = true
@@ -103,8 +109,10 @@ function myFunction() {
         searchLocation(locationInput.value)
     }
 }
+
 //Start the program
 start()
+
 //launches when page loads, get location from IP and draw map.
 function start() {
     clearM()
@@ -163,13 +171,15 @@ function start() {
         locationInput.value = ''
     })
 }
+
 //Initial grid draw.
-function drawGrid(lati, lonj, s, City) { //'s' is width and height of grid.      
+function drawGrid(lati, lonj, s, city) { //'s' is width and height of grid.      
     locationInput.value = ''
     locationInput.placeholder = "Enter a location..."
     searched = false
     eraseSearchDisplay()
     displaySearches(fs)
+    walkScore(lati, lonj, city)
     localStorage.place7896 = JSON.stringify(storedSearches[0])
     localStorage.levels7896 = JSON.stringify(storedSearches[1])
     //Make increments 'latInc' and 'lonInc' equal in distance at center.
@@ -485,6 +495,7 @@ function drawGrid(lati, lonj, s, City) { //'s' is width and height of grid.
         }
     }
 }
+
 //Restores search button after T time.
 function restoreSearchButton() {
     if ((isMouseDown == true || isMouseDown == undefined) || (isScrolling == true && searched == true)) {
@@ -507,6 +518,7 @@ function restoreSearchButton() {
         }, 250)
     }
 }
+
 //Get input location data.
 function getLocationData() {
     let url
@@ -534,6 +546,7 @@ function getLocationData() {
             return data.data
         })
 }
+
 //Get input location approximate area size in lat/lon
 function searchLocation(search) {
     getLocationData(search)
@@ -568,6 +581,7 @@ function searchLocation(search) {
             }
         })
 }
+
 //Display map of entered location with size dependent on size of location.
 function goToLocation(lat, lon, min, max) {
     OK.removeEventListener("click", myFunction)
@@ -583,6 +597,7 @@ function goToLocation(lat, lon, min, max) {
     RAD = radC * widthP
     drawGrid(lat, lon, gridSize, city)
 }
+
 //check to see if feature is on the same blue pixel color as water.
 function isWater(coords) {
     const blue = [170, 211, 223]
@@ -608,6 +623,7 @@ function isWater(coords) {
     //If three or more pixels are blue, returns true. 
     return not_blues < 3
 }
+
 function changeZip(zipCode) {
     const zipUrl = "https://nominatim.openstreetmap.org/search?postalcode=" + zipCode + "&country=USA&format=json"
     fetch(zipUrl).then(function (response) {
@@ -633,6 +649,7 @@ function changeZip(zipCode) {
         locationInput.placeholder = zipCode
     })
 }
+
 //Changes central coordinates to current center of map, and changes feature size according to new zoomLevel.
 function changeCoord() {
     OK.removeEventListener("click", myFunction)
@@ -697,6 +714,7 @@ function changeCoord() {
             console.log("ERROR: UNABLE TO CHANGE LOCATION")
         })
 }
+
 //Clears last map and creates new map div for new search.
 function clearM() {
     disp.children[0].remove()
@@ -705,6 +723,7 @@ function clearM() {
     m.setAttribute("id", "map")
     disp.append(m)
 }
+
 //Displays searches in HTML element.
 function displaySearches(index) {
     if (index == 0) {
@@ -740,18 +759,21 @@ function displaySearches(index) {
         ERASE.setAttribute("style", "display: inline")
     }
 }
+
 //See past search history.
 function seePrev() {
     fs -= 3
     eraseSearchDisplay()
     displaySearches(fs)
 }
+
 //See latest search history.
 function seeNext() {
     fs += 3
     eraseSearchDisplay()
     displaySearches(fs)
 }
+
 //Erases search history.
 function eraseSearches() {
     storedSearches = [[], []]
@@ -760,6 +782,7 @@ function eraseSearches() {
     eraseSearchDisplay()
     return
 }
+
 //Updates 'Previous Searches' HTML element to display different searches.
 function eraseSearchDisplay() {
     ERASE.setAttribute("style", "display: none")
@@ -770,6 +793,7 @@ function eraseSearchDisplay() {
         HDISP.children[v].children[1].textContent = ""
     }
 }
+
 //Screen size queries for navbar type.
 function mediaQueryOne(query) {
     if (query.matches) {
@@ -789,3 +813,25 @@ mediaQueryOne(minSize)
 mediaQueryTwo(maxSize)
 minSize.addEventListener("change", mediaQueryOne)
 maxSize.addEventListener("change", mediaQueryTwo)
+
+//Walk Score API function
+function walkScore(lat, lon, address) {
+    this.address = encodeURI(address)
+    url = `https://api.walkscore.com/score?format=json&
+    address=${this.address}&lat=${lat}&
+    lon=${lon}&transit=1&bike=1&wsapikey=${walkKey}`
+    fetch(url)
+    .then(function (response) {
+        //If response.ok is successful, return response, else reject promise and trigger catch.
+        if(response.ok) return response.json
+        else {
+            return Promise.reject(response)
+        }
+    })
+    .then(function (data) {
+        console.log(data)
+    })
+    .catch(function (error) {
+        console.log(`Something went wrong: ${error}`)
+    })
+}
