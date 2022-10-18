@@ -91,8 +91,10 @@ document.addEventListener("keypress", function (e) {
 if (localStorage.getItem("place7896") == null) {
     var storedSearches = [[], []]
     for (let v = 0; v < 3; v++) {
-        HDISP.children[v].children[0].textContent = ""
-        HDISP.children[v].children[1].textContent = ""
+        if (HDISP.children[v].children[0] !== undefined) {
+            HDISP.children[v].children[0].textContent = ""
+            HDISP.children[v].children[1].textContent = ""
+        }
     }
     displaySearches(fs)
 } else {
@@ -217,9 +219,9 @@ function drawGrid(lati, lonj, s, City) {
     lonInc = latInc / Math.cos(lati * 0.0174533)
     //Number of points on each side of central point.
     const half = s / 2 - 0.5
-    features = []
-    p = 0
-    greyFeatures = []
+    let features = []
+    let p = 0
+    let greyFeatures = []
     for (let i = 0; i < s; i++) {
         for (let j = 0; j < s; j++) {
             let la = lati - half * latInc + i * latInc
@@ -317,10 +319,13 @@ function drawGrid(lati, lonj, s, City) {
                             zz++
                         }
                         str = str.slice(0, -4)
-                        features[p].set("id", str)
-                        features[p].setStyle(colorStyle)
+                        features[p - 1].set("id", str)
+                        features[p - 1].setStyle(colorStyle)
                         //Applies dynamic size adjustment to each feature.
-                        features[p].setStyle(function (feature, resolution) {
+                        features[p - 1].setStyle(function (
+                            feature,
+                            resolution,
+                        ) {
                             colorStyle
                                 .getImage()
                                 .setScale(
@@ -343,7 +348,7 @@ function drawGrid(lati, lonj, s, City) {
                             }),
                         })
                         //Applies an id of 'grey' to each point with no data.
-                        greyFeatures.push(features[p])
+                        greyFeatures.push(features[p - 1])
                         let str = ""
                         let zz = 0
                         for (const ptype of pollTypes) {
@@ -359,11 +364,14 @@ function drawGrid(lati, lonj, s, City) {
                         }
                         if (str == "") str = "no data here"
                         for (let each of greyFeatures) {
-                            each.set("id", str)
+                            if (each !== undefined) each.set("id", str)
                         }
-                        features[p].setStyle(greyStyle)
+                        features[p - 1].setStyle(greyStyle)
                         //Applies dynamic size adjustment to each feature.
-                        features[p].setStyle(function (feature, resolution) {
+                        features[p - 1].setStyle(function (
+                            feature,
+                            resolution,
+                        ) {
                             greyStyle
                                 .getImage()
                                 .setScale(
@@ -386,25 +394,33 @@ function drawGrid(lati, lonj, s, City) {
                             fill: new ol.style.Fill({ color: [130, 131, 130] }), //set colors to grey if no data.
                         }),
                     })
+
                     //Applies an id of 'grey' to each point with no data.
-                    greyFeatures.push(features[p])
+                    greyFeatures.push(features[p - 1])
                     let str = ""
                     let zz = 0
                     str = "no data here"
                     for (let each of greyFeatures) {
-                        each.set("id", str)
+                        if (each !== undefined) each.set("id", str)
                     }
-                    features[p].setStyle(greyStyle)
-                    //Applies dynamic size adjustment to each feature.
-                    features[p].setStyle(function (feature, resolution) {
-                        greyStyle
-                            .getImage()
-                            .setScale(
-                                map.getView().getResolutionForZoom(zoomLevel) /
-                                    resolution,
-                            )
-                        return greyStyle
-                    })
+                    if (features[p - 1] !== undefined) {
+                        features[p - 1].setStyle(greyStyle)
+                        //Applies dynamic size adjustment to each feature.
+                        features[p - 1].setStyle(function (
+                            feature,
+                            resolution,
+                        ) {
+                            greyStyle
+                                .getImage()
+                                .setScale(
+                                    map
+                                        .getView()
+                                        .getResolutionForZoom(zoomLevel) /
+                                        resolution,
+                                )
+                            return greyStyle
+                        })
+                    }
                     p++
                     console.log("ERROR: NO DATA FOUND FOR CIRCLE")
                 })
@@ -961,8 +977,9 @@ function displaySearches(index) {
     } else {
         let w = 0
         for (let v = index; v < index + 3; v++) {
-            HDISP.children[w].children[0].innerHTML = storedSearches[0][v]
-            HDISP.children[w].children[1].innerHTML = storedSearches[1][v]
+            console.log(HDISP.children[w])
+            HDISP.children[w].childNodes[0].innerHTML = storedSearches[0][v]
+            HDISP.children[w].childNodes[1].innerHTML = storedSearches[1][v]
             w++
         }
         NEXT.setAttribute("style", "display: inline")
@@ -999,8 +1016,10 @@ function eraseSearchDisplay() {
     NEXT.setAttribute("style", "display: none")
     PREV.setAttribute("style", "display:none")
     for (let v = 0; v < 3; v++) {
-        HDISP.children[v].children[0].textContent = ""
-        HDISP.children[v].children[1].textContent = ""
+        if (HDISP.children[v].children[0] !== undefined) {
+            HDISP.children[v].children[0].textContent = ""
+            HDISP.children[v].children[1].textContent = ""
+        }
     }
 }
 //Screen size queries for navbar type.
