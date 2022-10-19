@@ -246,13 +246,16 @@ function drawGrid(lati, lonj, s, City) {
                     if (i == half && j == half) {
                         llTitle.textContent =
                             "The pollution levels in " + city + " are:"
-                        for (let m = 0; m < 7; m++) {
+                        console.log(llContent)
+                        for (let m = 0; m < 7; m++)
                             llContent.children[m].textContent = ""
-                        }
+                        console.log("huh")
                         let z = 0
                         let xx = 0
                         let sstr = ""
-                        for (const potype of pollTypes) {
+                        console.log("y")
+                        for (let potype of pollTypes) {
+                            console.log("ahoy")
                             if (potype in data.data.iaqi) {
                                 llContent.children[z].innerHTML =
                                     pollNames[xx] +
@@ -757,8 +760,10 @@ function getLocationData() {
             return data.data
         })
 }
+let newSearch = false
 //Get input location approximate area size in lat/lon
 function searchLocation(search) {
+    newSearch = true
     getLocationData(search).then(function (data) {
         if (!data) return
         let box = data.boundingbox
@@ -815,6 +820,7 @@ function goToLocation(lat, lon, min, max) {
     latInc = Inc * resolution * widthP
     RAD = radC * widthP
     drawGrid(lat, lon, gridSize, city)
+    newSearch = false
 }
 //check to see if feature is on the same blue pixel color as water.
 function isWater(coords) {
@@ -968,20 +974,11 @@ function displaySearches(index) {
     }
     if (storedSearches[0].length - index < 4) {
         let w = 0
-        for (let v = index; v < storedSearches[0].length; v++) {
-            HDISP.children[w].children[0].innerHTML = storedSearches[0][v]
-            HDISP.children[w].children[1].innerHTML = storedSearches[1][v]
-            w++
-        }
+
         NEXT.setAttribute("style", "display: none")
     } else {
         let w = 0
-        for (let v = index; v < index + 3; v++) {
-            console.log(HDISP.children[w])
-            HDISP.children[w].childNodes[0].innerHTML = storedSearches[0][v]
-            HDISP.children[w].childNodes[1].innerHTML = storedSearches[1][v]
-            w++
-        }
+
         NEXT.setAttribute("style", "display: inline")
     }
     if (storedSearches[0].length == 0) {

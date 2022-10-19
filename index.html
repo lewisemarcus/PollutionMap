@@ -72,8 +72,7 @@
                 <div id="disp">
                     <div id="map" class="map"></div>
                 </div>
-                <div id="wait1"></div>
-                <div id="wait2"></div>
+             
                 <button class="button is-info mx-1" type="button" id="here">Search Here<i
                         class="fa fa-search ml-1"></i></button>
 
@@ -95,7 +94,7 @@
                     <h2 id="levelsTitle" class="content title is-5"></h2>
                     <br>
                 </div>
-                    <p></p>
+                <div id="levelsContent">
                     <div></div>
                     <div></div>
                     <div></div>
@@ -103,7 +102,7 @@
                     <div></div>
                     <div></div>
                     <div></div>
-
+                </div>
             <br>
                 <br>
                 <div id="btw">
@@ -112,7 +111,7 @@
                 <br>
             </div>
 
-            <div id="previous" class="card rDisp">
+            <div id="previous" class="card rDisp" style="display: none">
                 <div class="TitleWrap card-content">
                     <h2 class="content title is-5">Previous Searches</h2>
                 </div>
@@ -131,11 +130,11 @@
                             <h3></h3>
                             <p></p>
                         </div>
-                    </div>
+            </div>
                     
                     <button type="button" id="seeNext">Next</button>
                     <br>
-                    <div id="prevNav">
+                    <div id="prevNav" style="display: none">
                         <button type="button" class="button is-info mx-1" id="seeNext">Next</button>
                         <button type="button" class="button is-info" id="seePrev">Back</button>
 
