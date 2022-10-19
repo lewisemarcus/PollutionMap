@@ -77,8 +77,7 @@ const HDISP = document.getElementById("displayedSearches")
 let fs = 0 //index of first stored element to display
 const PREV = document.getElementById("seePrev")
 PREV.addEventListener("click", seePrev)
-const NEXT = document.getElementById("seeNext")
-NEXT.addEventListener("click", seeNext)
+
 const ERASE = document.getElementById("eraseSearches")
 ERASE.addEventListener("click", eraseSearches)
 overlayContainerEl.style.display = "none"
@@ -107,6 +106,7 @@ if (localStorage.getItem("place7896") == null) {
 let startClick
 //Event listener function for host's current location in real life.
 function localSearch() {
+    newSearch = false
     searchCurrentEl.setAttribute("style", "visibility: hidden")
     currentLoc.setAttribute("style", "visibility: hidden")
     start()
@@ -114,6 +114,7 @@ function localSearch() {
 //Event listener function for search host's location on map.
 function searchCurrent() {
     searched = true
+    newSearch = false
     searchCurrentEl.setAttribute("style", "visibility: hidden")
     currentLoc.setAttribute("style", "visibility: hidden")
     changeCoord()
@@ -246,16 +247,14 @@ function drawGrid(lati, lonj, s, City) {
                     if (i == half && j == half) {
                         llTitle.textContent =
                             "The pollution levels in " + city + " are:"
-                        console.log(llContent)
                         for (let m = 0; m < 7; m++)
                             llContent.children[m].textContent = ""
-                        console.log("huh")
+
                         let z = 0
                         let xx = 0
                         let sstr = ""
-                        console.log("y")
+
                         for (let potype of pollTypes) {
-                            console.log("ahoy")
                             if (potype in data.data.iaqi) {
                                 llContent.children[z].innerHTML =
                                     pollNames[xx] +
@@ -565,7 +564,7 @@ function drawGrid(lati, lonj, s, City) {
                                             )
                                         return highlightStyle
                                     })
-                                    console.log(feature)
+
                                     //Grabs coordinates of selected feature and sets popup to center coordinates.
                                     let clickedCoordinate =
                                         feature.values_.geometry.flatCoordinates
@@ -674,7 +673,16 @@ function drawGrid(lati, lonj, s, City) {
                                 )
                             clicked = false
                             currentLoc.addEventListener("click", localSearch)
+
                             OK.addEventListener("click", myFunction)
+
+                            const center = map.getView().getCenter()
+                            const resolution = map.getView().getResolution()
+                            if (newSearch)
+                                map.getView().setCenter([
+                                    center[0] + 10,
+                                    center[1] + 10,
+                                ])
                         })
                         map.getView().on("change:center", function () {
                             isScrolling = true
@@ -688,8 +696,10 @@ function drawGrid(lati, lonj, s, City) {
                                     "style",
                                     "visibility: visible",
                                 )
+
                             restoreSearchButton()
                         })
+
                         map.addOverlay(popup)
                     }
                 })
@@ -811,6 +821,7 @@ function goToLocation(lat, lon, min, max) {
     let points = [min, max, [max[0], min[1]], [min[0], max[1]]]
     let geo = new ol.geom.Polygon([points], "XY")
     clearM()
+    console.log(map)
     map.getView().fit(geo)
     zoomLevel = Math.max(Math.min(map.getView().getZoom(), 14), 4)
     let resolution = map.getView().getResolutionForZoom(zoomLevel)
@@ -820,7 +831,6 @@ function goToLocation(lat, lon, min, max) {
     latInc = Inc * resolution * widthP
     RAD = radC * widthP
     drawGrid(lat, lon, gridSize, city)
-    newSearch = false
 }
 //check to see if feature is on the same blue pixel color as water.
 function isWater(coords) {
@@ -974,12 +984,8 @@ function displaySearches(index) {
     }
     if (storedSearches[0].length - index < 4) {
         let w = 0
-
-        NEXT.setAttribute("style", "display: none")
     } else {
         let w = 0
-
-        NEXT.setAttribute("style", "display: inline")
     }
     if (storedSearches[0].length == 0) {
         ERASE.setAttribute("style", "display: none")
@@ -1010,7 +1016,7 @@ function eraseSearches() {
 //Updates 'Previous Searches' HTML element to display different searches.
 function eraseSearchDisplay() {
     ERASE.setAttribute("style", "display: none")
-    NEXT.setAttribute("style", "display: none")
+
     PREV.setAttribute("style", "display:none")
     for (let v = 0; v < 3; v++) {
         if (HDISP.children[v].children[0] !== undefined) {
