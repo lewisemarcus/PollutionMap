@@ -184,6 +184,7 @@ function start() {
                 parseInt(getComputedStyle(sizer).getPropertyValue("width")) /
                     600,
             )
+            console.log(Inc)
             latInc = Inc * widthP * 0.00274658203125
             RAD = radC * widthP
             drawGrid(lat, lon, gridSize, city)
@@ -217,7 +218,13 @@ function drawGrid(lati, lonj, s, City) {
     localStorage.place7896 = JSON.stringify(storedSearches[0])
     localStorage.levels7896 = JSON.stringify(storedSearches[1])
     //Make increments 'latInc' and 'lonInc' equal in distance at center.
+    //Long degree == cos(lat degree)
+    //0.0174533 degree to radian conversion value
+    //Math.cos(lati * 0.0174533) converts given degree to radian and gives approx long value in radians.
+    //latInc scales with resolution, which scales with location coordinates.
+    //Due to curvature of the earth, longitudinal distances are not constant, however latitudinal are (approx.) and so we need to scale the lonInc with latInc.
     lonInc = latInc / Math.cos(lati * 0.0174533)
+    console.log("1", Math.cos(lati * 0.0174533), lonInc, latInc)
     //Number of points on each side of central point.
     const half = s / 2 - 0.5
     let features = []
@@ -225,8 +232,12 @@ function drawGrid(lati, lonj, s, City) {
     let greyFeatures = []
     for (let i = 0; i < s; i++) {
         for (let j = 0; j < s; j++) {
+            //subtract lati by (half * latInc) to begin at furthest point to the left of lati,lonj coordinates.
+            //by distributing latInc/lonInc values, allows la,lo to increase by a radian distance as radian distance reflects a tighter grid, rather than using absolute degree values.
+
             let la = lati - half * latInc + i * latInc
             let lo = lonj - half * lonInc + j * lonInc
+
             //Pollution fetch request.
             const pollutionUrl =
                 "https://api.waqi.info/feed/geo:" +
@@ -778,6 +789,7 @@ function searchLocation(search) {
         if (!data) return
         let box = data.boundingbox
         let left, right, bottom, top
+        console.log(box)
         if (box[2] > 0 && box[0] > 0) {
             ;(left = box[2]),
                 (right = box[3]),
@@ -880,6 +892,7 @@ function changeZip(zipCode) {
                 parseInt(getComputedStyle(sizer).getPropertyValue("width")) /
                     600,
             )
+
             latInc = Inc * resolution * widthP
             RAD = radC * widthP
             clearM()
