@@ -1,16 +1,12 @@
-# bluerSkies
+# Bluer Skies
 
-<img src="./assets/images/TranspCenterLogo.png" alt="The logo">
+<img src="./assets/images/bluer.png" alt="The logo">
 
 This website displays a scrollable map with a grid of colored points representing fine particle pollution levels.<br>
 It uses (quasi) unlimited free APIs.<br>
 
-A work in progress.<br>
-![Image of website](./assets/images/Capture.PNG)
-
 Try it out here:<br>
 <a href="https://lewisemarcus.github.io/PollutionMap/">LINK TO WEBSITE</a><b>
-
 
 Contributors:
 
@@ -22,5 +18,3 @@ Contributors:
 
 For any inquiries please contact us via the link below:<br>
 <a href="mailto:pilibili@protonmail.com">Email Us</a>
-
-
